@@ -3,6 +3,21 @@ from uuid import uuid4
 
 
 @dataclass
+class DoctorUser:
+    doctor_id: str
+    specialty: str
+    availability: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DoctorUser":
+        return cls(
+            doctor_id=data.get("doctor_id", data.get("id", "")),
+            specialty=data.get("specialty", ""),
+            availability=list(data.get("availability", [])),
+        )
+
+
+@dataclass
 class Appointment:
     doctor_id: str
     patient_id: str
