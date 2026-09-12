@@ -1,5 +1,5 @@
 from typing import List, Optional
-from src.models import Appointment
+from model import Appointment
 from src.persistence import StorageManager
 
 class AppointmentManager:

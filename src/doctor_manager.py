@@ -1,5 +1,5 @@
 from typing import List, Optional
-from src.models import DoctorUser
+from model import DoctorUser
 from src.persistence import StorageManager
 
 
