@@ -1,5 +1,4 @@
-from model import Patient
-
+from .model import Patient
 
 class PatientManager:
     """Simple manager for patient records."""
