@@ -1,29 +1,53 @@
+from typing import List, Optional
+
 from .model import Patient
+from .persistence import StorageManager
+
 
 class PatientManager:
-    """Simple manager for patient records."""
 
-    def __init__(self):
-        # Store patients using username as the key.
-        self.patients = {}
+    def __init__(self, user_storage: StorageManager):
+        self.storage = user_storage
 
-    def add_patient(self, patient):
-        """Add a patient to the system."""
-        if patient.username in self.patients:
+    def _get_patients_dict(self) -> dict:
+        clinic_data = self.storage.load_data()
+        return clinic_data.get("patients", {})
+
+    def get_all_patients(self) -> List[Patient]:
+        patients_data = self._get_patients_dict()
+        return [Patient.from_dict(data) for data in patients_data.values()]
+
+    def get_patient_by_username(self, username: str) -> Optional[Patient]:
+        patient_data = self._get_patients_dict().get(username)
+        return Patient.from_dict(patient_data) if patient_data else None
+
+    def add_patient(self, patient: Patient) -> bool:
+        clinic_data = self.storage.load_data()
+        patients_dict = clinic_data.setdefault("patients", {})
+
+        if patient.username in patients_dict:
             return False
 
-        self.patients[patient.username] = patient
+        patients_dict[patient.username] = patient.to_dict()
+        self.storage.save_data(clinic_data)
         return True
 
-    def create_patient(self, username, password_hash, age=None,
-                       contact=None, medical_history=None):
-        """Create a new patient and add them to the system."""
+    def create_patient(
+        self,
+        username: str,
+        password_hash: str,
+        salt: str = "",
+        age: Optional[int] = None,
+        contact: Optional[str] = None,
+        medical_history: Optional[List[str]] = None,
+    ) -> Optional[Patient]:
         patient = Patient(
-            username,
-            password_hash,
-            age,
-            contact,
-            medical_history
+            username=username,
+            password_hash=password_hash,
+            salt=salt,
+            age=age,
+            contact=contact,
+            medical_history=medical_history,
         )
 
         if self.add_patient(patient):
@@ -31,62 +55,37 @@ class PatientManager:
 
         return None
 
-    def get_patient(self, username):
-        """Find a patient by username."""
-        return self.patients.get(username)
+    def update_patient(
+        self,
+        username: str,
+        contact: Optional[str] = None,
+        new_medical_entry: Optional[str] = None,
+    ) -> bool:
+        clinic_data = self.storage.load_data()
+        patients_dict = clinic_data.get("patients", {})
 
-    def authenticate(self, username, password_hash):
-        """Check if the username and password hash are correct."""
-        patient = self.get_patient(username)
-
-        if patient is not None and patient.password_hash == password_hash:
-            return patient
-
-        return None
-
-    def update_patient(self, username, contact=None, medical_history=None):
-        """Update a patient's contact and medical history."""
-        patient = self.get_patient(username)
-
-        if patient is None:
+        if username not in patients_dict:
             return False
 
+        patient_data = patients_dict[username]
+
         if contact is not None:
-            patient.contact = contact
+            patient_data["contact"] = contact
 
-        if medical_history is not None:
-            patient.medical_history = medical_history
+        if new_medical_entry is not None:
+            history = patient_data.setdefault("medical_history", [])
+            history.append(new_medical_entry)
 
+        self.storage.save_data(clinic_data)
         return True
 
-    def delete_patient(self, username):
-        """Remove a patient from the system."""
-        if username in self.patients:
-            del self.patients[username]
+    def delete_patient(self, username: str) -> bool:
+        clinic_data = self.storage.load_data()
+        patients_dict = clinic_data.get("patients", {})
+
+        if username in patients_dict:
+            del patients_dict[username]
+            self.storage.save_data(clinic_data)
             return True
 
         return False
-
-    def get_all_patients(self):
-        """Return all patients."""
-        return list(self.patients.values())
-
-    def to_dict(self):
-        """Convert all patients into dictionaries for saving."""
-        data = {}
-
-        for username, patient in self.patients.items():
-            data[username] = patient.to_dict()
-
-        return data
-
-    @classmethod
-    def from_dict(cls, data):
-        """Create a PatientManager from saved data."""
-        manager = cls()
-
-        for patient_data in data.values():
-            patient = Patient.from_dict(patient_data)
-            manager.add_patient(patient)
-
-        return manager
