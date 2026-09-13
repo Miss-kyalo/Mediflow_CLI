@@ -15,7 +15,7 @@ class PatientManager:
         self.patients[patient.username] = patient
         return True
 
-    def create_patient(self, username, password_hash, age,
+    def create_patient(self, username, password_hash, age=None,
                        contact=None, medical_history=None):
         """Create a new patient and add them to the system."""
         patient = Patient(
