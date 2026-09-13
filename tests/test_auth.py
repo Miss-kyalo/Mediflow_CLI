@@ -1,7 +1,7 @@
 import pytest
 
-from model import Patient
-from patient_manager import PatientManager
+from src.model import Patient
+from src.patient_manager import PatientManager
 
 
 def create_manager():

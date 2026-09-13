@@ -1,7 +1,7 @@
 import hashlib
 
-from model import Patient
-from patient_manager import PatientManager
+from .model import Patient
+from .patient_manager import PatientManager
 
 def hash_password(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
@@ -13,7 +13,7 @@ class Authenticator:
 
     def register_patient(self, username, password, age=None, contact=None, medical_history=None):
         password_hash = hash_password(password)
-        patient = Patient(username, password_hash, age, contact)
+        patient = Patient(username, password_hash, age, contact, medical_history)
 
         added = self.patient_manager.add_patient(patient)
         if not added:

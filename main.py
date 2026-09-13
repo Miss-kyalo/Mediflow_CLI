@@ -1,4 +1,3 @@
-import sys
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
@@ -7,7 +6,8 @@ from rich.table import Table
 # Import project modules
 from src.patient_manager import PatientManager
 from src.persistence import StorageManager
-from src.utility import clear_screen, format_timestamp, validate_phone
+from src.auth import hash_password
+from src.utility import clear_screen, validate_age, validate_phone
 
 console = Console()
 storage = StorageManager()
@@ -47,6 +47,9 @@ def register_patient_ui():
 
     password = Prompt.ask("Enter password", password=True)
     age = IntPrompt.ask("Enter age")
+    while not validate_age(str(age)):
+        console.print("[bold red]Age must be between 1 and 120.[/bold red]")
+        age = IntPrompt.ask("Enter age")
 
     contact = Prompt.ask("Enter contact number")
     while not validate_phone(contact):
@@ -57,7 +60,10 @@ def register_patient_ui():
 
     # Uses create_patient from PatientManager
     patient = patient_mgr.create_patient(
-        username=username, password_hash=password, age=age, contact=contact
+        username=username,
+        password_hash=hash_password(password),
+        age=age,
+        contact=contact,
     )
     if patient:
         console.print(

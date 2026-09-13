@@ -104,6 +104,7 @@ class Appointment:
 
         if appt_id is not None:
             self.id = appt_id
+            next_appointment = max(next_appointment, int(appt_id) + 1)
         else:
             self.id = next_appointment
             next_appointment += 1

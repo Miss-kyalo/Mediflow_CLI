@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import List, Optional
-from model import Appointment
-from src.persistence import StorageManager
+
+from .model import Appointment
+from .persistence import StorageManager
 
 class AppointmentManager:
        
@@ -16,23 +18,33 @@ class AppointmentManager:
         clinic_data["appointments"] = appointments_data
         self.storage.save_data(clinic_data)
 
-    def create_appointment(self, doctor_id: str, patient_id: str, date: str, time_slot: str) -> Optional[Appointment]:
+    def create_appointment(
+        self,
+        doctor_username: str,
+        patient_username: str,
+        when: datetime,
+        reason: str,
+    ) -> Optional[Appointment]:
         appointments = self.get_all_appointments()
 
         for appt in appointments:
-            if appt.doctor_id == doctor_id and appt.date == date and appt.time_slot == time_slot and appt.status == "Scheduled":
-                print(f"[X] Conflict: Doctor is already booked for {time_slot} on {date}.")
+            if (
+                appt.doctor_username == doctor_username
+                and appt.when == when
+                and appt.status in {"pending", "confirmed"}
+            ):
+                print(f"[X] Conflict: Doctor is already booked for {when}.")
                 return None
 
         new_appt = Appointment(
-            doctor_id=doctor_id,
-            patient_id=patient_id,
-            time_slot=time_slot,
-            date=date
+            doctor_username=doctor_username,
+            patient_username=patient_username,
+            when=when,
+            reason=reason,
         )
 
         appts_data = self._get_appointments_data()
-        appts_data[new_appt.appt_id] = new_appt.to_dict()
+        appts_data[str(new_appt.id)] = new_appt.to_dict()
         self._save_appointments_data(appts_data)
         return new_appt
 
@@ -41,12 +53,17 @@ class AppointmentManager:
         return [Appointment.from_dict(data) for data in appts_data.values()]
 
     def get_appointments_by_doctor(self, doctor_id: str) -> List[Appointment]:
-        return [appt for appt in self.get_all_appointments() if appt.doctor_id == doctor_id]
+        return [
+            appt
+            for appt in self.get_all_appointments()
+            if appt.doctor_username == doctor_id
+        ]
 
     def update_status(self, appt_id: str, new_status: str) -> bool:
         appts_data = self._get_appointments_data()
-        if appt_id in appts_data:
-            appts_data[appt_id]["status"] = new_status
+        key = str(appt_id)
+        if key in appts_data:
+            appts_data[key]["status"] = new_status.lower()
             self._save_appointments_data(appts_data)
             return True
         return False
