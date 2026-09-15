@@ -89,3 +89,4 @@ class PatientManager:
             return True
 
         return False
+    

@@ -33,7 +33,14 @@ Persistent Storage: Atomic JSON reads and writes with automatic backup generatio
 This directory contains data from the pytest's cache plugin,
 which provides the `--lf` and `--ff` options, as well as the `cache` fixture.
 
-**Do not** commit this to version control.
-
-See [the docs](https://docs.pytest.org/en/stable/how-to/cache.html) for more information.
-
+PROJECT CONTRIBUTIONS:
+appointment_manager.py -lynn
+auth.py-margret
+doctor_manager.py-lynn
+model.py-margret
+patient_manager.py-sajid
+persistence.py-masjid
+utility.py-margret
+test_auth.py-sajid
+main.py-masjid
+Readme.md-lynn
