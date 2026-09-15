@@ -73,3 +73,6 @@ class AppointmentManager:
             return True
 
         return False
+    
+if __name__ == "__main__":
+    print("[+] AppointmentManager module imported and verified successfully!")

@@ -129,7 +129,7 @@ def delete_patient_ui():
 def main_menu():
     while True:
         display_menu()
-        choice = IntPrompt.ask("Select an option", choices=[1, 2, 3, 4, 5])
+        choice = IntPrompt.ask("Select an option", choices=["1", "2", "3", "4", "5"])
 
         if choice == 1:
             register_patient_ui()
