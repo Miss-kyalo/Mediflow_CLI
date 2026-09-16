@@ -47,13 +47,13 @@ class Patient(User):
         age: Optional[int] = None,
         contact: Optional[str] = None,
         medical_history: Optional[List[str]] = None,
+        assigned_doctor: Optional[str] = None,
     ):
         super().__init__(username, password_hash, salt, role="patient")
         self.age = age
         self.contact = contact
-        self.medical_history = (
-            medical_history if medical_history is not None else []
-        )
+        self.medical_history = medical_history if medical_history is not None else []
+        self.assigned_doctor = assigned_doctor
 
     def add_medical_history(self, entry: str) -> None:
         self.medical_history.append(entry)
@@ -68,6 +68,7 @@ class Patient(User):
                 "age": self.age,
                 "contact": self.contact,
                 "medical_history": self.medical_history,
+                "assigned_doctor": self.assigned_doctor,
             }
         )
         return data
@@ -81,6 +82,7 @@ class Patient(User):
             age=data.get("age"),
             contact=data.get("contact"),
             medical_history=data.get("medical_history"),
+            assigned_doctor=data.get("assigned_doctor"),
         )
 
 
@@ -185,3 +187,37 @@ class Appointment:
             status=AppointmentStatus(data.get("status", "pending")),
             appt_id=str(data["id"]) if "id" in data else None,
         )
+
+if __name__ == "__main__":
+    print("=== Testing Patient ===")
+    patient = Patient("john_doe", "hashedpw123", age=30, contact="0712345678")
+    patient.add_medical_history("Allergic to penicillin")
+    print(patient)
+    print(patient.to_dict())
+    patient2 = Patient.from_dict(patient.to_dict())
+    print(patient2)
+
+    print("\n=== Testing Doctor ===")
+    doctor = Doctor("dr_smith", "hashedpw456", specialization="Cardiology",
+                     available_days=["Monday", "Wednesday", "Friday"])
+    print(doctor)
+    print(doctor.is_available_on_day("Monday"))
+    print(doctor.to_dict())
+    doctor2 = Doctor.from_dict(doctor.to_dict())
+    print(doctor2)
+
+    print("\n=== Testing Admin ===")
+    admin = Admin("admin_jane", "hashedpw789")
+    print(admin)
+    admin2 = Admin.from_dict(admin.to_dict())
+    print(admin2)
+
+    print("\n=== Testing Appointment ===")
+    appt = Appointment("john_doe", "dr_smith", datetime.now(), "Routine checkup")
+    print(appt.to_dict())
+    appt.confirm()
+    print("Status after confirm:", appt.status)
+    appt.complete()
+    print("Status after complete:", appt.status)
+    appt2 = Appointment.from_dict(appt.to_dict())
+    print(appt2.status)

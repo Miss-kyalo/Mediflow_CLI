@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Optional
 
 from .model import Patient
@@ -89,3 +90,4 @@ class PatientManager:
             return True
 
         return False
+    
