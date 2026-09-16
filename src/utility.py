@@ -1,7 +1,7 @@
+from __future__ import annotations
 import os
 import re
 from datetime import datetime
-
 
 def clear_screen() -> None:
     """Clear the terminal screen based on the operating system."""

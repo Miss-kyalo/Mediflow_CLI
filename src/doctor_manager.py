@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Optional
 
 from .model import Doctor
@@ -68,3 +69,28 @@ class DoctorManager:
                 return True
 
         return False
+    def create_doctor(
+        self,
+        username: str,
+        password_hash: str,
+        salt: str = "",
+        specialization: str = "General",
+        available_days: Optional[List[str]] = None,
+    ) -> Optional[Doctor]:
+        clinic_data = self.storage.load_data()
+        doctors_dict = clinic_data.setdefault("doctors", {})
+
+        if username in doctors_dict:
+            return None
+
+        doctor = Doctor(
+            username=username,
+            password_hash=password_hash,
+            salt=salt,
+            specialization=specialization,
+            available_days=available_days,
+        )
+        doctors_dict[username] = doctor.to_dict()
+        self.storage.save_data(clinic_data)
+        return doctor
+    

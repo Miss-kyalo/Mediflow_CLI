@@ -1,3 +1,4 @@
+from __future__ import annotations
 import hashlib
 import os
 import secrets
@@ -72,6 +73,8 @@ class Authenticator:
 
         if not verify_password(patient.password_hash, patient.salt, password):
             print("[X] Invalid username or password.")
-            return None
+            return None 
+        
+        return patient
 
         return patient

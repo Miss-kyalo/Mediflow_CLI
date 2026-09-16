@@ -1,0 +1,13 @@
+{
+  "patients": {
+    "maggie miranda": {
+      "username": "maggie miranda",
+      "password_hash": "63bbd36b7adab5a1e026e9dc80fac19466305032f75a3f9fd2fbb99a194d67ed",
+      "salt": "ddbcad9e2cb1484980e3dadb6cbd180b",
+      "role": "patient",
+      "age": 21,
+      "contact": "0702297695",
+      "medical_history": []
+    }
+  }
+}
