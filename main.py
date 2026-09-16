@@ -5,13 +5,9 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
 from rich.table import Table
-<<<<<<< Updated upstream
-from src.auth import hash_password
-=======
 
 from src.auth import hash_password, verify_password, Authenticator
 from src.model import Admin
->>>>>>> Stashed changes
 from src.patient_manager import PatientManager
 from src.doctor_manager import DoctorManager
 from src.appointment_manager import AppointmentManager
@@ -288,12 +284,6 @@ def login_ui():
 
 def patient_dashboard(patient):
     while True:
-<<<<<<< Updated upstream
-        display_menu()
-
-        choice = IntPrompt.ask("Select an option", choices=["1", "2", "3", "4", "5"])
-        choice = IntPrompt.ask("Select an option", choices=["1", "2", "3", "4", "5"])
-=======
         console.print(f"\n[bold cyan]--- Patient Dashboard: {patient.username} ---[/bold cyan]")
         console.print("[1] View My Appointments")
         console.print("[2] Book Appointment")
@@ -470,8 +460,6 @@ def admin_dashboard():
         console.print("[7] Logout")
 
         choice = IntPrompt.ask("Select an option", choices=["1", "2", "3", "4", "5", "6", "7"])
->>>>>>> Stashed changes
-
 
         if choice == 1:
             register_patient_ui()
@@ -543,6 +531,3 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
-
-    main_menu()
-
